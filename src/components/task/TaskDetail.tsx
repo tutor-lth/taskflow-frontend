@@ -150,7 +150,7 @@ const TaskDetail: React.FC = () => {
   };
 
   const handleDeleteTask = async () => {
-    if (!window.confirm('정말이 작업을 삭제하시겠습니까?')) return;
+    if (!window.confirm('이 작업을 삭제하시겠습니까?')) return;
     
     try {
       await deleteTask(taskId);
@@ -184,7 +184,7 @@ const TaskDetail: React.FC = () => {
           onClick={() => navigate('/tasks')}
           sx={{ mb: 2 }}
         >
-          Back to Tasks
+          뒤로 돌아가기
         </Button>
         
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -202,7 +202,7 @@ const TaskDetail: React.FC = () => {
                 color={priorityColors[task.priority] as any} 
               />
               <Chip 
-                label={`Due: ${format(new Date(task.dueDate), 'PP')}`} 
+                label={`마감일: ${format(new Date(task.dueDate), 'PP')}`}
               />
             </Box>
           </Box>
@@ -221,10 +221,10 @@ const TaskDetail: React.FC = () => {
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Description
+              설명
             </Typography>
             <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
-              {task.description || 'No description provided.'}
+              {task.description || '설명이 없습니다.'}
             </Typography>
           </Paper>
 
@@ -234,28 +234,28 @@ const TaskDetail: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Details
+              상세
             </Typography>
             
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 2, mt: 2 }}>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Status
+                상태
               </Typography>
               <FormControl fullWidth size="small">
                 <Select
                   value={task.status}
                   onChange={(e) => handleStatusChange(e.target.value as TaskStatus)}
                 >
-                  <MenuItem value={TaskStatus.TODO}>To Do</MenuItem>
-                  <MenuItem value={TaskStatus.IN_PROGRESS}>In Progress</MenuItem>
-                  <MenuItem value={TaskStatus.DONE}>Done</MenuItem>
+                  <MenuItem value={TaskStatus.TODO}>TODO</MenuItem>
+                  <MenuItem value={TaskStatus.IN_PROGRESS}>IN_PROGRESS</MenuItem>
+                  <MenuItem value={TaskStatus.DONE}>DONE</MenuItem>
                 </Select>
               </FormControl>
             </Box>
             
             <Box sx={{ mb: 2 }}>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Assignee
+                담당자
               </Typography>
               <Typography variant="body1">
                 {task.assignee?.name || 'Unassigned'}
@@ -264,7 +264,7 @@ const TaskDetail: React.FC = () => {
             
             <Box sx={{ mb: 2 }}>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Due Date
+                마감일
               </Typography>
               <Typography variant="body1">
                 {format(new Date(task.dueDate), 'PP')}
@@ -273,7 +273,7 @@ const TaskDetail: React.FC = () => {
             
             <Box sx={{ mb: 2 }}>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Created
+                생성일
               </Typography>
               <Typography variant="body1">
                 {format(new Date(task.createdAt), 'PP')}
@@ -282,7 +282,7 @@ const TaskDetail: React.FC = () => {
             
             <Box>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Last Updated
+                수정일
               </Typography>
               <Typography variant="body1">
                 {format(new Date(task.updatedAt), 'PP p')}
@@ -294,14 +294,14 @@ const TaskDetail: React.FC = () => {
 
       {/* Edit Task Dialog */}
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>Edit Task</DialogTitle>
+        <DialogTitle>작업 수정</DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ mt: 2 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              label="Title"
+              label="제목"
               name="title"
               value={editedTask.title || ''}
               onChange={handleInputChange}
@@ -309,7 +309,7 @@ const TaskDetail: React.FC = () => {
             <TextField
               margin="normal"
               fullWidth
-              label="Description"
+              label="설명"
               name="description"
               multiline
               rows={4}
@@ -319,11 +319,11 @@ const TaskDetail: React.FC = () => {
             <Grid container spacing={2} sx={{ mt: 1 }}>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Priority</InputLabel>
+                  <InputLabel>우선순위</InputLabel>
                   <Select
                     name="priority"
                     value={editedTask.priority || TaskPriority.MEDIUM}
-                    label="Priority"
+                    label="우선순위"
                     onChange={(e) => {
                       const value = e.target.value;
                       handleInputChange({
@@ -342,11 +342,11 @@ const TaskDetail: React.FC = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel>Assignee</InputLabel>
+                  <InputLabel>담당자</InputLabel>
                   <Select
                     name="assigneeId"
                     value={editedTask.assigneeId || 0}
-                    label="Assignee"
+                    label="담당자"
                     onChange={(e) => {
                       const value = e.target.value;
                       handleInputChange({
@@ -368,7 +368,7 @@ const TaskDetail: React.FC = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Due Date"
+                  label="마감일"
                   name="dueDate"
                   type="datetime-local"
                   value={editedTask.dueDate ? editedTask.dueDate.substring(0, 16) : ''}
@@ -392,9 +392,9 @@ const TaskDetail: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEditDialog}>Cancel</Button>
+          <Button onClick={handleCloseEditDialog}>취소</Button>
           <Button onClick={handleSaveTask} variant="contained" color="primary">
-            Save
+            수정
           </Button>
         </DialogActions>
       </Dialog>

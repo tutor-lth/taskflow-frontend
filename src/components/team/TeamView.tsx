@@ -320,6 +320,8 @@ const TeamView: React.FC = () => {
   const handleRemoveMember = async (userId: number) => {
     if (!selectedTeam) return;
 
+    if (!window.confirm('이 멤버을 제외하시겠습니까?')) return;
+
     try {
       const response = await removeTeamMember(selectedTeam.id, userId);
       if (response.success && response.data) {
@@ -396,7 +398,7 @@ const TeamView: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" component="h1">
-          Team View
+          팀 관리
         </Typography>
         <Button
           variant="contained"
@@ -442,7 +444,7 @@ const TeamView: React.FC = () => {
                   {selectedTeam.description}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                  {members.length} Members
+                  멤버 수 : {members.length}
                 </Typography>
               </Box>
               <IconButton
@@ -456,7 +458,7 @@ const TeamView: React.FC = () => {
 
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Typography variant="h5">
-              Team Members
+              팀 멤버
             </Typography>
             <Button
               variant="outlined"
@@ -503,11 +505,11 @@ const TeamView: React.FC = () => {
                       <Divider sx={{ my: 2 }} />
 
                       <Typography variant="subtitle1" gutterBottom>
-                        Task Progress
+                        작업 진행
                       </Typography>
 
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography variant="body2">Completion Rate:</Typography>
+                        <Typography variant="body2">완료율:</Typography>
                         <Typography variant="body2" fontWeight="bold">
                           {completionRate}%
                         </Typography>
@@ -515,11 +517,11 @@ const TeamView: React.FC = () => {
 
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
                         <Chip
-                          label={`${stats.total} Total`}
+                          label={`총 ${stats.total}`}
                           size="small"
                         />
                         <Chip
-                          label={`${stats.todo} To Do`}
+                          label={` ${stats.todo} To Do`}
                           color="warning"
                           size="small"
                         />
@@ -543,7 +545,7 @@ const TeamView: React.FC = () => {
             {members.length === 0 && (
               <Grid item xs={12}>
                 <Paper sx={{ p: 3, textAlign: 'center' }}>
-                  <Typography variant="body1">No team members found.</Typography>
+                  <Typography variant="body1">팀 멤버를 찾을 수 없습니다.</Typography>
                 </Paper>
               </Grid>
             )}
@@ -551,7 +553,7 @@ const TeamView: React.FC = () => {
         </Box>
       ) : (
         <Paper sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body1">No teams found.</Typography>
+          <Typography variant="body1">팀을 찾을 수 없습니다.</Typography>
         </Paper>
       )}
 

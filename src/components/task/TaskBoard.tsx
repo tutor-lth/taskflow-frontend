@@ -39,9 +39,9 @@ import LoadingIndicator from '../common/LoadingIndicator';
 import ErrorMessage from '../common/ErrorMessage';
 
 const priorityLabels = {
-  [TaskPriority.LOW]: '낮음',
-  [TaskPriority.MEDIUM]: '중간',
-  [TaskPriority.HIGH]: '높음',
+  [TaskPriority.LOW]: 'LOW',
+  [TaskPriority.MEDIUM]: 'MEDIUM',
+  [TaskPriority.HIGH]: 'HIGH',
 };
 
 const priorityColors = {
@@ -259,9 +259,9 @@ const TaskBoard: React.FC = () => {
 
   const getColumnTitle = (status: TaskStatus) => {
     const titles = {
-      [TaskStatus.TODO]: '할 일',
-      [TaskStatus.IN_PROGRESS]: '진행 중',
-      [TaskStatus.DONE]: '완료',
+      [TaskStatus.TODO]: 'TODO',
+      [TaskStatus.IN_PROGRESS]: 'IN_PROGRESS',
+      [TaskStatus.DONE]: 'DONE',
     };
     return `${titles[status]} (${tasks[status].length})`;
   };
@@ -458,9 +458,9 @@ const TaskBoard: React.FC = () => {
                       } as any);
                     }}
                   >
-                    <MenuItem value={TaskPriority.LOW}>낮음</MenuItem>
-                    <MenuItem value={TaskPriority.MEDIUM}>중간</MenuItem>
-                    <MenuItem value={TaskPriority.HIGH}>높음</MenuItem>
+                    <MenuItem value={TaskPriority.LOW}>LOW</MenuItem>
+                    <MenuItem value={TaskPriority.MEDIUM}>MEDIUM</MenuItem>
+                    <MenuItem value={TaskPriority.HIGH}>HIGH</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
