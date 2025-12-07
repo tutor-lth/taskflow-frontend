@@ -63,6 +63,7 @@ const Search: React.FC = () => {
     teams: [],
   });
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const navigate = useNavigate();
 
@@ -71,14 +72,19 @@ const Search: React.FC = () => {
   };
 
   const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      alert("검색어를 입력해주세요.");
+      return;
+    }
+
 
     setLoading(true);
+    setHasSearched(true);
     try {
       // For a real application, you would use a dedicated search API
       // but we're using a mix of APIs for this demo
       const response = await search(searchQuery);
-      
+
       if (response.success) {
         setResults(response.data);
       } else {
@@ -99,7 +105,7 @@ const Search: React.FC = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
@@ -121,7 +127,7 @@ const Search: React.FC = () => {
   return (
     <Container maxWidth="md">
       <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 4 }}>
-        Search
+        검색
       </Typography>
 
       <Paper sx={{ p: 3, mb: 4 }}>
@@ -129,10 +135,10 @@ const Search: React.FC = () => {
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Search for tasks, users, or teams..."
+            placeholder="작업, 멤버, 팀을 검색어를 입력해주세요."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -144,11 +150,11 @@ const Search: React.FC = () => {
           <Button
             variant="contained"
             color="primary"
-            sx={{ ml: 2 }}
+            sx={{ ml: 2, width: 70 }}
             onClick={handleSearch}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Search'}
+            찾기
           </Button>
         </Box>
 
@@ -156,17 +162,17 @@ const Search: React.FC = () => {
           <Box>
             <Tabs value={tabValue} onChange={handleTabChange} centered>
               <Tab
-                label={`Tasks (${results.tasks.length})`}
+                label={`작업 (${results.tasks.length})`}
                 icon={<TaskIcon />}
                 iconPosition="start"
               />
               <Tab
-                label={`Users (${results.users.length})`}
+                label={`사용자 (${results.users.length})`}
                 icon={<PersonIcon />}
                 iconPosition="start"
               />
               <Tab
-                label={`Teams (${results.teams.length})`}
+                label={`팀 (${results.teams.length})`}
                 icon={<TeamIcon />}
                 iconPosition="start"
               />
@@ -202,7 +208,7 @@ const Search: React.FC = () => {
                   ))
                 ) : (
                   <Typography variant="body1" align="center">
-                    No tasks found matching your query.
+                    매칭되는 작업이 없습니다.
                   </Typography>
                 )}
               </List>
@@ -229,7 +235,7 @@ const Search: React.FC = () => {
                   ))
                 ) : (
                   <Typography variant="body1" align="center">
-                    No users found matching your query.
+                    매칭되는 사용자가 없습니다.
                   </Typography>
                 )}
               </List>
@@ -256,7 +262,7 @@ const Search: React.FC = () => {
                   ))
                 ) : (
                   <Typography variant="body1" align="center">
-                    No teams found matching your query.
+                    매칭되는 팀이 없습니다.
                   </Typography>
                 )}
               </List>
@@ -264,14 +270,14 @@ const Search: React.FC = () => {
           </Box>
         )}
 
-        {searchQuery && !loading && 
-          results.tasks.length === 0 && 
-          results.users.length === 0 && 
+        {hasSearched && !loading &&
+          results.tasks.length === 0 &&
+          results.users.length === 0 &&
           results.teams.length === 0 && (
           <Box sx={{ p: 4, textAlign: 'center' }}>
-            <Typography variant="h6">No results found</Typography>
+            <Typography variant="h6">결과를 찾을 수 없습니다.</Typography>
             <Typography variant="body1" color="text.secondary">
-              Try a different search term or check your spelling.
+              다른 검색어를 입력하거나 검색어를 다시 입력해주세요.
             </Typography>
           </Box>
         )}
