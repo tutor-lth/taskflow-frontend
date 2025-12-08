@@ -52,6 +52,7 @@ import {
   Dashboard as DashboardIcon,
   BarChart as ChartIcon,
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { getDashboardStats, getMyTasks, getMyActivities, getWeeklyTrend } from '../../services/dashboardService';
 import { DashboardStats, Activity, Task } from '../../types';
 import LoadingIndicator from '../common/LoadingIndicator';
@@ -118,6 +119,7 @@ const Dashboard: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const theme = useTheme();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -595,8 +597,18 @@ const Dashboard: React.FC = () => {
                     {myTasks.todayTasks.length > 3 && (
                       <ListItem sx={{ px: 2, py: 1 }}>
                         <ListItemText>
-                          <Typography variant="body2" color="text.secondary" textAlign="center">
-                            +{myTasks.todayTasks.length - 3}개 더 보기...
+                          <Typography
+                              variant="h6"
+                              textAlign="center"
+                              color="secondary.main"
+                              onClick={() => navigate('/tasks')}
+                              sx={{
+                                cursor: 'pointer',
+                                fontWeight: 600,
+                                ':hover': { textDecoration: 'underline' },
+                              }}
+                          >
+                            +{myTasks.todayTasks.length - 3}개 더 보기
                           </Typography>
                         </ListItemText>
                       </ListItem>
@@ -693,6 +705,7 @@ const Dashboard: React.FC = () => {
                   <Typography
                     variant="h6"
                     color="secondary.main"
+                    onClick={() => navigate('/activities')}
                     sx={{
                       cursor: 'pointer',
                       fontWeight: 600,

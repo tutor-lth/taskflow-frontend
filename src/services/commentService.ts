@@ -21,7 +21,13 @@ export const createComment = async (taskId: number, comment: CreateCommentReques
   if (getUseMock()) {
     return mockCommentService.createComment(taskId, comment);
   }
-  return post<Comment>(`/tasks/${taskId}/comments`, comment);
+
+  // parentId가 없으면 필드 자체를 제거
+  const requestBody = comment.parentId !== undefined && comment.parentId !== null
+    ? comment
+    : { content: comment.content };
+
+  return post<Comment>(`/tasks/${taskId}/comments`, requestBody);
 };
 
 export const updateComment = async (taskId: number, commentId: number, content: string) => {

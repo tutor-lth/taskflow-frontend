@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -64,7 +64,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onSaveEdit,
 }) => {
   // YouTube style: 대댓글은 parentId로만 구분하고 들여쓰기로 표시
-  const isReply = comment.parentId !== undefined;
+  const isReply = comment.parentId != null; // null과 undefined 모두 체크
 
   return (
     <Box 
@@ -417,9 +417,15 @@ const Comments: React.FC<CommentsProps> = ({ taskId }) => {
 
     try {
       const response = await updateComment(taskId, commentId, editText);
-      if (response.success) {
-        // Refresh comments to get the updated structure
-        fetchComments(0, false);
+      if (response.success && response.data) {
+        // 로컬 상태에서 해당 댓글만 업데이트
+        setComments(prevComments =>
+          prevComments.map(comment =>
+            comment.id === commentId
+              ? { ...comment, content: editText, updatedAt: response.data!.updatedAt }
+              : comment
+          )
+        );
         setEditingCommentId(null);
         setEditText('');
       }
@@ -438,6 +444,18 @@ const Comments: React.FC<CommentsProps> = ({ taskId }) => {
     setIsInitialLoad(true); // 정렬 변경 시에도 로딩 표시
     // sortOrder 변경으로 useEffect가 자동으로 fetchComments를 호출함
   };
+
+  // 중복된 댓글 제거 (렌더링 직전에 필터링)
+  const uniqueComments = useMemo(() => {
+    const seen = new Set<number>();
+    return comments.filter(comment => {
+      if (seen.has(comment.id)) {
+        return false;
+      }
+      seen.add(comment.id);
+      return true;
+    });
+  }, [comments]);
 
   if (isInitialLoad || (loading && comments.length === 0)) {
     return (
@@ -539,8 +557,8 @@ const Comments: React.FC<CommentsProps> = ({ taskId }) => {
 
       {/* Comments list */}
       <Box>
-        {comments.length > 0 ? (
-          comments.map((comment) => (
+        {uniqueComments.length > 0 ? (
+          uniqueComments.map((comment) => (
             <React.Fragment key={comment.id}>
               <CommentItem
                 comment={comment}
@@ -636,12 +654,12 @@ const Comments: React.FC<CommentsProps> = ({ taskId }) => {
         {/* 임시 디버깅용 더 보기 버튼 */}
         {hasMore && !loadingMore && (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-            <Button 
-              variant="outlined" 
+            <Button
+              variant="outlined"
               onClick={handleLoadMore}
               sx={{ textTransform: 'none' }}
             >
-              더 보기 (현재 {comments.length}개 / 전체 {totalComments}개)
+              더 보기 (현재 {uniqueComments.length}개 / 전체 {totalComments}개)
             </Button>
           </Box>
         )}

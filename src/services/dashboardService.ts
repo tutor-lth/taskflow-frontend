@@ -28,16 +28,12 @@ export const getMyTasks = async () => {
   return get<MyTaskSummary>(`/dashboard/tasks`);
 };
 
-export const getMyActivities = async (page = 0, size = 10) => {
+export const getMyActivities = async () => {
   if (getUseMock()) {
-    return mockDashboardService.getMyActivities(page, size);
+    return mockDashboardService.getMyActivities();
   }
 
-  const params = new URLSearchParams();
-  params.append('page', page.toString());
-  params.append('size', size.toString());
-
-  return get<PagedResponse<Activity>>(`/activities/me?${params.toString()}`);
+  return get<PagedResponse<Activity>>(`/activities/me`);
 };
 
 export const search = async (query: string) => {

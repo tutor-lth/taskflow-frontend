@@ -324,13 +324,20 @@ const TeamView: React.FC = () => {
 
     try {
       const response = await removeTeamMember(selectedTeam.id, userId);
-      if (response.success && response.data) {
-        const updatedTeams = teams.map(team => 
-          team.id === selectedTeam.id ? response.data as Team : team
+      if (response.success) {
+        // 로컬 상태에서 해당 멤버만 제거
+        const updatedMembers = members.filter(member => member.id !== userId);
+        setMembers(updatedMembers);
+
+        // 팀 목록에서도 해당 팀의 멤버 정보 업데이트
+        const updatedTeams = teams.map(team =>
+          team.id === selectedTeam.id
+            ? { ...team, members: updatedMembers }
+            : team
         );
         setTeams(updatedTeams);
-        setSelectedTeam(response.data as Team);
-        setMembers((response.data as Team).members || []);
+        setSelectedTeam({ ...selectedTeam, members: updatedMembers });
+
         showNotification('멤버가 성공적으로 제거되었습니다.');
       } else {
         showNotification(response.message, 'error');
