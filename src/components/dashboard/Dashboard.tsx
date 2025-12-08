@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Card,
@@ -172,6 +172,18 @@ const Dashboard: React.FC = () => {
 
     fetchDashboardData();
   }, []);
+
+  // 중복된 활동 제거
+  const uniqueActivities = useMemo(() => {
+    const seen = new Set<number>();
+    return activities.filter(activity => {
+      if (seen.has(activity.id)) {
+        return false;
+      }
+      seen.add(activity.id);
+      return true;
+    });
+  }, [activities]);
 
   // 차트 데이터 준비
   const getTaskStatusData = () => {
@@ -647,9 +659,9 @@ const Dashboard: React.FC = () => {
                 </Typography>
               </Box>
               <Box sx={{ flex: 1, overflow: 'auto' }}>
-                {activities && activities.length > 0 ? (
+                {uniqueActivities && uniqueActivities.length > 0 ? (
                   <List sx={{ p: 0 }}>
-                    {activities.slice(0, 3).map((activity, index) => (
+                    {uniqueActivities.slice(0, 3).map((activity, index) => (
                       <React.Fragment key={activity.id}>
                         <ListItem
                           alignItems="flex-start"
@@ -684,7 +696,7 @@ const Dashboard: React.FC = () => {
                             }
                           />
                         </ListItem>
-                        {index < Math.min(activities.length, 3) - 1 && <Divider component="li" />}
+                        {index < Math.min(uniqueActivities.length, 3) - 1 && <Divider component="li" />}
                       </React.Fragment>
                     ))}
                   </List>
@@ -696,7 +708,7 @@ const Dashboard: React.FC = () => {
                   </Box>
                 )}
               </Box>
-              {activities && activities.length > 3 && (
+              {uniqueActivities && uniqueActivities.length > 3 && (
                 <Box sx={{
                   p: 4,
                   textAlign: 'center',
@@ -712,7 +724,7 @@ const Dashboard: React.FC = () => {
                       ':hover': { textDecoration: 'underline' },
                     }}
                   >
-                    +{activities.length - 3}개 활동 더 보기
+                    +{uniqueActivities.length - 3}개 활동 더 보기
                   </Typography>
                 </Box>
               )}
