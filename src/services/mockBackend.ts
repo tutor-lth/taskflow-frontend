@@ -375,7 +375,7 @@ const comments: Comment[] = [
     userId: 3,
     user: users[2],
     content: '이번 주 금요일까지 초안을 공유하겠습니다.',
-    parentId: 6, // Reply to comment 6
+    // parentId: null, // Reply to comment 6
     createdAt: subDays(new Date(), 1).toISOString(),
     updatedAt: subDays(new Date(), 1).toISOString(),
   },
@@ -646,10 +646,50 @@ const activities: Activity[] = [
     id: 1,
     userId: 1,
     user: users[0],
-    action: 'created_task',
-    targetType: 'task',
+    action: '작업 상태 변경',
+    targetType: 'TASK_STATUS_CHANGED',
+    targetId: 1,
+    description: '작업 상태를 IN_PROGRESS에서 DONE으로 변경했습니다.',
+    createdAt: subDays(new Date(), 10).toISOString(),
+  },
+  {
+    id: 2,
+    userId: 1,
+    user: users[0],
+    action: '작업 생성',
+    targetType: 'TASK_CREATED',
+    targetId: 1,
+    description: '새로운 작업 "API 문서 작성"을 생성했습니다.',
+    createdAt: subDays(new Date(), 5).toISOString(),
+  },
+  {
+    id: 1,
+    userId: 1,
+    user: users[0],
+    action: '작업 생성',
+    targetType: 'TASK_CREATED',
     targetId: 1,
     description: '"사용자 인증 구현" 작업을 생성했습니다',
+    createdAt: subDays(new Date(), 10).toISOString(),
+  },
+  {
+    id: 1,
+    userId: 1,
+    user: users[0],
+    action: '작업 생성',
+    targetType: 'TASK_CREATED',
+    targetId: 1,
+    description: '"사용자 인증 구현" 작업을 생성했습니다',
+    createdAt: subDays(new Date(), 10).toISOString(),
+  },
+  {
+    id: 1,
+    userId: 1,
+    user: users[0],
+    action: '작업 수정',
+    targetType: 'TASK_UPDATED',
+    targetId: 1,
+    description: '"사용자 인증 구현" 작업을 수정했습니다',
     createdAt: subDays(new Date(), 10).toISOString(),
   },
   {
@@ -659,7 +699,7 @@ const activities: Activity[] = [
     action: 'updated_status',
     targetType: 'task',
     targetId: 1,
-    description: '"사용자 인증 구현"을 완료로 이동했습니다',
+    description: '댓글을 수정했습니다.',
     createdAt: subDays(new Date(), 5).toISOString(),
   },
   {
@@ -1201,7 +1241,7 @@ export const mockCommentService = {
     
     // 해당 작업의 모든 댓글 가져오기
     const allTaskComments = comments.filter(c => c.taskId === taskId);
-    
+
     // 부모 댓글들만 먼저 분리하고 정렬
     const parentComments = allTaskComments
       .filter(c => !c.parentId)
@@ -1331,6 +1371,7 @@ export const mockCommentService = {
     };
     
     comments[commentIndex] = updatedComment;
+    console.log(updatedComment);
     
     return createSuccessResponse(updatedComment);
   },
@@ -1617,7 +1658,6 @@ export const mockDashboardService = {
       todoTasks,
       overdueTasks,
       teamProgress: Math.round((completedTasks / totalTasks) * 100),
-      myTasksToday: tasks.filter(t => t.assigneeId === 1).length,
       completionRate: Math.round((completedTasks / totalTasks) * 100),
     };
     
@@ -1688,15 +1728,14 @@ export const mockDashboardService = {
     return createSuccessResponse(paginateResults(sortedActivities, page, size));
   },
   
-  getMyActivities: async (page = 0, size = 10) => {
+  getMyActivities: async () => {
     await delay(300);
     
     const myActivities = activities.filter(a => a.userId === 1);
     const sortedActivities = [...myActivities].sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-    
-    return createSuccessResponse(paginateResults(sortedActivities, page, size));
+    return createSuccessResponse(sortedActivities);
   },
   
   search: async (query: string) => {
@@ -1759,7 +1798,6 @@ export const mockDashboardService = {
         date: date.toISOString().split('T')[0]
       });
     }
-    
     return createSuccessResponse(trendData);
   },
 };

@@ -126,7 +126,6 @@ export interface DashboardStats {
   todoTasks: number;
   overdueTasks: number;
   teamProgress: number;
-  myTasksToday: number;
   completionRate: number;
 }
 
